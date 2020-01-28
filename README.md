@@ -1,3 +1,34 @@
+# QC and alignment of DNA-Seq data.
+  A=Mills_and_1000G_gold_standard
+  betsy_run.py --network_png bam12.pdf --receipt bam13.txt --num_cores 20 \
+    --input FastqFolder --input_file fastq11 \
+    --input SampleGroupFile --input_file samp11.txt \
+    --input ReferenceGenome --input_file genomes/Broad.hg19 \
+    --output DNASeqPreprocessing --output_file bam11 \
+    --dattr DNASeqPreprocessing.adapters_trimmed=yes \
+    --mattr adapters_fasta=adapters/TruSeq3-PE-2.fa \
+    --dattr DNASeqPreprocessing.aligner=bwa_mem \
+    --dattr DNASeqPreprocessing.has_read_groups=yes \
+    --dattr DNASeqPreprocessing.duplicates_marked=yes \
+    --dattr DNASeqPreprocessing.indel_realigned=yes \
+    --mattr realign_known_sites1=v/$A.indels.b37.vcf.gz \
+    --mattr realign_known_sites2=v/1000G_phase1.indels.b37.vcf.gz \
+    --dattr DNASeqPreprocessing.base_quality_recalibrated=yes \
+    --mattr recal_known_sites1=v/$A.indels.b37.vcf.gz \
+    --mattr recal_known_sites2=v/1000G_phase1.indels.b37.vcf.gz \
+    --mattr recal_known_sites3=v/dbsnp_138.b37.vcf.gz \
+    --dattr DNASeqPreprocessing.sorted=coordinate \
+    --dattr DNASeqPreprocessing.indexed=yes \
+    --mattr target_bed=bed01.txt
+
+> **Notes\:**  
+> If doing whole genome sequencing, should leave off target_bed.  For
+> exome sequencing, this is a BED file that indicates the exome
+> regions that were targeted for sequencing.  This is provided by the
+> manufacturer of the pull down kit.
+
+
+
 
 # Do copy number analysis.
 betsy_run.py --network_png net.pdf --num_cores 20 \
@@ -193,3 +224,9 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
   --dattr SimpleVariantMatrix.with_coverage=yes 
 
 
+# Analysis to make sure germline and tumors are paired correctly.
+  betsy_run.py --network_plot tn02.pdf \
+    --input SimpleVariantMatrix --input_file mut01.txt \
+    --dattr SimpleVariantMatrix.caller_suite=general \
+    --input NormalCancerFile --input_file nc01.xls \
+    --output TumorNormalPairingAnalysis --output_file tn01
