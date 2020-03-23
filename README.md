@@ -240,3 +240,9 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
     --dattr SimpleVariantMatrix.caller_suite=general \
     --input NormalCancerFile --input_file nc01.xls \
     --output TumorNormalPairingAnalysis --output_file tn01
+    
+    
+    
+    
+# Calculate Cancer Cell Frequency for SNP Variants from WES
+please see ccf_calculate.R for detail
