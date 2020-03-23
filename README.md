@@ -175,7 +175,17 @@ betsy_run.py --network_png pc02.pdf --num_cores 40 \
   --mattr filter_by_min_alt_reads=5 \
   --mattr filter_by_min_vaf=0.05 \
   --mattr max_copynum_for_pyclone=8 \
-  --mattr use_only_consistent_cn=yes
+  --mattr use_only_consistent_cn=yes \
+  --mattr pyclone_iterations=100 \
+  --mattr pyclone_density=beta_binomial \
+  --mattr pyclone_prior=major_copy_number
+
+pyclone_prior can be:
+parental_copy_number - all minor or major alleles are mutant
+major_copy_number - any number of chromosomes up to major copy number is mutant
+total_copy_number - any number of chromosomes is mutant
+
+
   
   
   # Run Sequenza.
