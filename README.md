@@ -30,7 +30,7 @@
 
 
 
-# Do copy number analysis.
+# Do copy number analysis with FACETS.
 betsy_run.py --network_png net.pdf --num_cores 20 \
   --input GenericCNVResults --input_file cnv \
   --input GenericCNVModelSelectionFile --input_file model.txt \
@@ -200,7 +200,9 @@ betsy_run.py --network_png cn12.pdf --receipt cnv13.txt --num_cores 20 \
    --mattr discard_chrom_with_prefix=GL,JH,KB,KE,NC_,MT
    
 
-# Somatic variant calls from BAM files.
+
+# Somatic variant calls from BAM files.  This generates a
+# SimpleVariantMatrix.
 COSMIC=cosmic.v79.grch37.mutation_data.txt.gz
 betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
   --input BamFolder --input_file bam01 \
@@ -234,6 +236,87 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
   --dattr SimpleVariantMatrix.with_coverage=yes 
 
 
+# This is a newer pipeline that will generate a
+# "VariantCallingAnalysis".  This will generate the variant calls, the
+# VCF files, do some filtering, and some other miscellaneous analyses
+# (like counting the mutation burden).
+  A=Mills_and_1000G_gold_standard
+  COSMIC=cosmic.v79.grch37.mutation_data.txt.gz
+  betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
+    --input BamFolder --input_file bam11 \
+    --dattr BamFolder.each_file_contains=one_sample \
+    --dattr BamFolder.aligner=bwa_mem \
+    --dattr BamFolder.sorted=coordinate \
+    --dattr BamFolder.indexed=yes \
+    --dattr BamFolder.adapters_trimmed=yes \
+    --dattr BamFolder.has_read_groups=yes \
+    --dattr BamFolder.duplicates_marked=yes \
+    --dattr BamFolder.base_quality_recalibrated=yes \
+    --dattr BamFolder.indel_realigned=yes \
+    --input SampleGroupFile --input_file samp61.txt \
+    --input ReferenceGenome --input_file genomes/Broad.hg19 \
+    --input NormalCancerFile --input_file nc01.txt \
+    --output VariantCallingAnalysis --output_file call01 \
+    --dattr VariantCallingAnalysis.duplicates_marked=yes \
+    --dattr VariantCallingAnalysis.caller_suite=cancer \
+    --dattr VCFFolder.aligner=bwa_mem \
+    --mattr wgs_or_wes=wes \
+    --mattr strelka_skip_depth_filter=yes \
+    --mattr mutect_dbsnp_vcf=MuTect/dbsnp_132_b37.leftAligned.vcf \
+    --mattr mutect_cosmic_vcf=MuTect/b37_cosmic_v54_120711.vcf \
+    --mattr muse_dbsnp_vcf=MuSE/dbsnp_132_b37.leftAligned.vcf.gz \
+    --dattr VariantCallingAnalysis.filtered_calls=yes \
+    --mattr filter_by_min_total_reads=20 \
+    --mattr filter_by_min_alt_reads=5 \
+    --mattr filter_by_min_vaf=0.05 \
+    --mattr filter_by_min_callers=2 \
+    --dattr VariantCallingAnalysis.annotated_with_annovar=yes \
+    --mattr annovar_buildver=hg19 \
+    --dattr VariantCallingAnalysis.annotated_with_snpeff=yes \
+    --mattr snpeff_genome=GRCh37.75 \
+    --dattr VariantCallingAnalysis.variant_annotations=cancer_cosmic \
+    --mattr cancer_genes_file="008 Cancer Genes/cancer_genes.txt" \
+    --mattr cosmic_variants_file="008 Cancer Genes/${COSMIC}" \
+    --dattr VariantCallingAnalysis.with_coverage=yes \
+    --mattr tmb_targeted_regions=bed01.txt
+
+# This will call variants using a set of germline callers.
+  A=Mills_and_1000G_gold_standard
+  COSMIC=cosmic.v79.grch37.mutation_data.txt.gz
+  betsy_run.py --num_cores 20 --network_png call12.pdf --receipt call13.txt \
+    --input BamFolder --input_file bam11/alignments.bam \
+    --dattr BamFolder.each_file_contains=one_sample \
+    --dattr BamFolder.aligner=bwa_mem \
+    --dattr BamFolder.sorted=coordinate \
+    --dattr BamFolder.indexed=yes \
+    --dattr BamFolder.adapters_trimmed=yes \
+    --dattr BamFolder.has_read_groups=yes \
+    --dattr BamFolder.duplicates_marked=yes \
+    --dattr BamFolder.base_quality_recalibrated=yes \
+    --dattr BamFolder.indel_realigned=yes \
+    --input SampleGroupFile --input_file samp61.txt \
+    --input ReferenceGenome --input_file genomes/Broad.hg19 \
+    --output VariantCallingAnalysis --output_file call11 \
+    --dattr VariantCallingAnalysis.duplicates_marked=yes \
+    --dattr VariantCallingAnalysis.caller_suite=general \
+    --dattr VCFFolder.aligner=bwa_mem \
+    --mattr wgs_or_wes=wes \
+    --dattr VariantCallingAnalysis.filtered_calls=yes \
+    --mattr filter_by_min_total_reads=20 \
+    --mattr filter_by_min_alt_reads=5 \
+    --mattr filter_by_min_vaf=0.05 \
+    --mattr filter_by_min_callers=2 \
+    --dattr VariantCallingAnalysis.annotated_with_annovar=yes \
+    --mattr annovar_buildver=hg19 \
+    --dattr VariantCallingAnalysis.annotated_with_snpeff=yes \
+    --mattr snpeff_genome=GRCh37.75 \
+    --dattr VariantCallingAnalysis.variant_annotations=cancer_cosmic \
+    --mattr cancer_genes_file="008 Cancer Genes/cancer_genes.txt" \
+    --mattr cosmic_variants_file="008 Cancer Genes/${COSMIC}" \
+    --dattr VariantCallingAnalysis.with_coverage=yes \
+    --mattr tmb_targeted_regions=bed01.txt
+
+
 # Analysis to make sure germline and tumors are paired correctly.
   betsy_run.py --network_plot tn02.pdf \
     --input SimpleVariantMatrix --input_file mut01.txt \
@@ -241,6 +324,10 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
     --input NormalCancerFile --input_file nc01.xls \
     --output TumorNormalPairingAnalysis --output_file tn01
     
+> **Notes\:**  
+> mut01.txt is a SimpleVariantMatrix containing the calls for both the
+> normal and cancer samples with a germline caller.
+
     
     
     
