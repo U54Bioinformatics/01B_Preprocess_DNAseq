@@ -240,8 +240,11 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
 # "VariantCallingAnalysis".  This will generate the variant calls, the
 # VCF files, do some filtering, and some other miscellaneous analyses
 # (like counting the mutation burden).
+
   A=Mills_and_1000G_gold_standard
+
   COSMIC=cosmic.v79.grch37.mutation_data.txt.gz
+
   betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
     --input BamFolder --input_file bam11 \
     --dattr BamFolder.each_file_contains=one_sample \
@@ -281,8 +284,11 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
     --mattr tmb_targeted_regions=bed01.txt
 
 # This will call variants using a set of germline callers.
+
   A=Mills_and_1000G_gold_standard
+
   COSMIC=cosmic.v79.grch37.mutation_data.txt.gz
+
   betsy_run.py --num_cores 20 --network_png call12.pdf --receipt call13.txt \
     --input BamFolder --input_file bam11/alignments.bam \
     --dattr BamFolder.each_file_contains=one_sample \
@@ -318,6 +324,7 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
 
 
 # Analysis to make sure germline and tumors are paired correctly.
+
   betsy_run.py --network_plot tn02.pdf \
     --input SimpleVariantMatrix --input_file mut01.txt \
     --dattr SimpleVariantMatrix.caller_suite=general \
