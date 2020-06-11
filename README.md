@@ -28,6 +28,32 @@
 > manufacturer of the pull down kit.
 
 
+# QC of BAM files.
+# This is a command for a folder of bam files that have been
+# preprocessed already (read groups added, duplicates marked,
+# indel realigned, base quality recalibrated, sorted, and indexed.)
+# If these have not been done, then may need to change command
+# accordingly.
+  betsy_run.py --network_png bam02.pdf --receipt bam03.txt --num_cores 20 \
+    --input BamFolder --input_file bam01 \
+    --dattr BamFolder.adapters_trimmed=yes \
+    --dattr BamFolder.aligner=bwa_mem \
+    --dattr BamFolder.has_read_groups=yes \
+    --dattr BamFolder.duplicates_marked=yes \
+    --dattr BamFolder.indel_realigned=yes \
+    --dattr BamFolder.base_quality_recalibrated=yes \
+    --dattr BamFolder.sorted=coordinate \
+    --dattr BamFolder.indexed=yes \
+    --input ReferenceGenome --input_file genomes/Broad.hg19 \
+    --output DNASeqStatSummary --output_file bam01 \
+    --dattr DNASeqStatSummary.adapters_trimmed=yes \
+    --dattr DNASeqStatSummary.aligner=bwa_mem \
+    --dattr DNASeqStatSummary.has_read_groups=yes \
+    --dattr DNASeqStatSummary.duplicates_marked=yes \
+    --dattr DNASeqStatSummary.indel_realigned=yes \
+    --dattr DNASeqStatSummary.base_quality_recalibrated=yes \
+    --mattr target_bed=bed01.txt
+
 
 
 # Do copy number analysis with FACETS.
