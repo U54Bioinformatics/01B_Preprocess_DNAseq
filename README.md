@@ -30,7 +30,7 @@
 
 # QC of BAM files.
 
-# This is a command for a folder of bam files that have been preprocessed already (read groups added, duplicates marked, indel realigned, base quality recalibrated, sorted, and indexed.) If these have not been done, then may need to change command accordingly.
+# This command does QC on a folder of BAM files.  Here, the files have already been preprocessed (read groups added, duplicates marked, indel realigned, base quality recalibrated, sorted, and indexed.).  If these have not been done, then may need to change command accordingly.
 
   betsy_run.py --network_png bam02.pdf --receipt bam03.txt --num_cores 20 \
     --input BamFolder --input_file bam01 \
@@ -55,6 +55,7 @@
 
 
 # Do copy number analysis with FACETS.
+
 betsy_run.py --network_png net.pdf --num_cores 20 \
   --input GenericCNVResults --input_file cnv \
   --input GenericCNVModelSelectionFile --input_file model.txt \
@@ -108,7 +109,8 @@ If you are running with exome sequencing, please change to:
 --mattr wgs_or_wes=wes
 
 
-# Do variant calls from BAM files with freebayes.
+# Use freebayes to do variant calls on a folder of BAM files.
+
 A=Mills_and_1000G_gold_standard
 betsy_run.py --num_cores 8 --network_png call02.pdf --receipt call03.txt \
   --input BamFolder --input_file proc21 \
@@ -131,8 +133,8 @@ betsy_run.py --num_cores 8 --network_png call02.pdf --receipt call03.txt \
 
 
 
-# Do variant calls from FASTQ files with freebayes, no indel
-# realignment.
+# Use freebayes to do variant calls on a folder of FASTQ files, no indel realignment.
+
 betsy_run.py --num_cores 8 --network_png call02.pdf --receipt call03.txt \
  --input FastqFolder --input_file proc21 \
  --input SampleGroupFile --input_file samp41.txt \
@@ -148,8 +150,7 @@ betsy_run.py --num_cores 8 --network_png call02.pdf --receipt call03.txt \
  --mattr wgs_or_wes=wgs
 
 
-# Do variant calls from BAM files with freebayes, no indel
-# realignment.
+# Use freebayes to do variant calls on a folder of BAM files, no indel realignment.
 betsy_run.py --num_cores 8 --network_png call02.pdf --receipt call03.txt \
 --input BamFolder --input_file proc21 \
 --dattr BamFolder.aligner=bwa_mem \
@@ -212,7 +213,7 @@ total_copy_number - any number of chromosomes is mutant
 
   
   
-  # Run Sequenza.
+# Run Sequenza.
 betsy_run.py --network_png cn12.pdf --receipt cnv13.txt --num_cores 20 \
    --input BamFolder --input_file bam11 \
    --dattr BamFolder.has_read_groups=yes \
@@ -225,50 +226,13 @@ betsy_run.py --network_png cn12.pdf --receipt cnv13.txt --num_cores 20 \
    
 
 
-# Somatic variant calls from BAM files.  This generates a
-# SimpleVariantMatrix.
-COSMIC=cosmic.v79.grch37.mutation_data.txt.gz
-betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
-  --input BamFolder --input_file bam01 \
-  --dattr BamFolder.sorted=coordinate \
-  --dattr BamFolder.indexed=yes \
-  --dattr BamFolder.has_read_groups=yes \
-  --dattr BamFolder.duplicates_marked=yes \
-  --dattr BamFolder.indel_realigned=yes \
-  --dattr BamFolder.base_quality_recalibrated=yes \
-  --dattr BamFolder.aligner=bwa_mem \
-  --input ReferenceGenome \
-  --input_file genomes/Broad.hg19/Homo_sapiens_assembly19.fasta \
-  --input SampleGroupFile --input_file samp02.xlsx \
-  --input NormalCancerFile --input_file nc01.xlsx \
-  --output SimpleVariantMatrix --output_file call01.txt \
-  --also_save_highest ManyCallerVCFFolders,call05 \
-  --dattr SimpleVariantMatrix.duplicates_marked=yes \
-  --dattr SimpleVariantMatrix.caller_suite=lance3 \
-  --mattr wgs_or_wes=wgs \
-  --mattr mutect_dbsnp_vcf=MuTect/dbsnp_132_b37.leftAligned.vcf \
-  --mattr mutect_cosmic_vcf=MuTect/b37_cosmic_v54_120711.vcf \
-  --dattr SimpleVariantMatrix.filtered_calls=yes \
-  --mattr filter_by_min_total_reads=20 \
-  --dattr SimpleVariantMatrix.annotated_with_annovar=yes \
-  --mattr annovar_buildver=hg19 \
-  --dattr SimpleVariantMatrix.annotated_with_snpeff=yes \
-  --mattr snpeff_genome=GRCh37.75 \
-  --dattr SimpleVariantMatrix.variant_annotations=cancer_cosmic \
-  --mattr cancer_genes_file="008 Cancer Genes/cancer_genes.txt" \
-  --mattr cosmic_variants_file="008 Cancer Genes/${COSMIC}" \
-  --dattr SimpleVariantMatrix.with_coverage=yes 
 
-
-# This is a newer pipeline that will generate a
-# "VariantCallingAnalysis".  This will generate the variant calls, the
-# VCF files, do some filtering, and some other miscellaneous analyses
-# (like counting the mutation burden).
+# Do variant calls on a folder of BAM files.  This will generate the variant calls, the VCF files, do some filtering, and some other miscellaneous analyses (like counting the mutation burden).
 
   A=Mills_and_1000G_gold_standard
-
+  
   COSMIC=cosmic.v79.grch37.mutation_data.txt.gz
-
+  
   betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
     --input BamFolder --input_file bam11 \
     --dattr BamFolder.each_file_contains=one_sample \
@@ -281,16 +245,15 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
     --dattr BamFolder.base_quality_recalibrated=yes \
     --dattr BamFolder.indel_realigned=yes \
     --input SampleGroupFile --input_file samp61.txt \
-    --input ReferenceGenome --input_file genomes/Broad.hg19 \
     --input NormalCancerFile --input_file nc01.txt \
+    --input ReferenceGenome --input_file genomes/Broad.hg19 \
     --output VariantCallingAnalysis --output_file call01 \
     --dattr VariantCallingAnalysis.duplicates_marked=yes \
-    --dattr VariantCallingAnalysis.caller_suite=cancer \
+    --dattr VariantCallingAnalysis.caller_suite=lance3 \
     --dattr VCFFolder.aligner=bwa_mem \
     --mattr wgs_or_wes=wes \
     --mattr strelka_skip_depth_filter=yes \
-    --mattr mutect_dbsnp_vcf=MuTect/dbsnp_132_b37.leftAligned.vcf \
-    --mattr mutect_cosmic_vcf=MuTect/b37_cosmic_v54_120711.vcf \
+    --mattr mutect_genome=hg19 \
     --mattr muse_dbsnp_vcf=MuSE/dbsnp_132_b37.leftAligned.vcf.gz \
     --dattr VariantCallingAnalysis.filtered_calls=yes \
     --mattr filter_by_min_total_reads=20 \
@@ -301,11 +264,12 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
     --mattr annovar_buildver=hg19 \
     --dattr VariantCallingAnalysis.annotated_with_snpeff=yes \
     --mattr snpeff_genome=GRCh37.75 \
-    --dattr VariantCallingAnalysis.variant_annotations=cancer_cosmic \
+    --dattr VariantCallingAnalysis.variant_annotations=cancer_cosmic_linked \
     --mattr cancer_genes_file="008 Cancer Genes/cancer_genes.txt" \
     --mattr cosmic_variants_file="008 Cancer Genes/${COSMIC}" \
     --dattr VariantCallingAnalysis.with_coverage=yes \
     --mattr tmb_targeted_regions=bed01.txt
+
 
 # This will call variants using a set of germline callers.
 
@@ -331,7 +295,6 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
     --dattr VariantCallingAnalysis.caller_suite=general \
     --dattr VCFFolder.aligner=bwa_mem \
     --mattr wgs_or_wes=wes \
-    --dattr VariantCallingAnalysis.filtered_calls=yes \
     --mattr filter_by_min_total_reads=20 \
     --mattr filter_by_min_alt_reads=5 \
     --mattr filter_by_min_vaf=0.05 \
@@ -358,6 +321,17 @@ betsy_run.py --num_cores 20 --network_png call02.pdf --receipt call03.txt \
 > **Notes\:**  
 > mut01.txt is a SimpleVariantMatrix containing the calls for both the
 > normal and cancer samples with a germline caller.
+
+
+# Check pairing using NGSCheckMate.
+
+  betsy_run.py --network_plot pair02.pdf \
+    --input VCFFolder --input_file vcf02 \
+    --output NGSCheckMateResults --output_file pair01 \
+    --mattr vcf_genome=GRCh37 \
+    --submit_to_cluster biocore6_pair01,1,64,pair04.log
+  # Took 1.9 min (seadragon).
+
 
     
     
