@@ -29,11 +29,9 @@
 
 
 # QC of BAM files.
-# This is a command for a folder of bam files that have been
-# preprocessed already (read groups added, duplicates marked,
-# indel realigned, base quality recalibrated, sorted, and indexed.)
-# If these have not been done, then may need to change command
-# accordingly.
+
+# This is a command for a folder of bam files that have been preprocessed already (read groups added, duplicates marked, indel realigned, base quality recalibrated, sorted, and indexed.) If these have not been done, then may need to change command accordingly.
+
   betsy_run.py --network_png bam02.pdf --receipt bam03.txt --num_cores 20 \
     --input BamFolder --input_file bam01 \
     --dattr BamFolder.adapters_trimmed=yes \
